@@ -1,22 +1,25 @@
 {-# OPTIONS_GHC -fno-warn-missing-signatures #-}
 {-# LANGUAGE FlexibleContexts #-}
 
-import           XMonad
-import           XMonad.Hooks.DynamicLog
-import           XMonad.Hooks.EwmhDesktops
-import           XMonad.Hooks.ManageDocks
-import           XMonad.Layout.FixedColumn
-import           XMonad.Layout.Renamed
-import           XMonad.Layout.Spacing
+import XMonad
+import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.EwmhDesktops
+import XMonad.Hooks.ManageDocks
+import XMonad.Layout.FixedColumn
+import XMonad.Layout.Renamed
+import XMonad.Layout.Spacing
+
+import SideSpacing
 
 myWorkspaces = map show ([1..9] :: [Integer])
 
-myLayout = avoidStruts $ spaced tiled ||| renamed [Replace "100Col"] emacs
+myLayout = avoidStruts $ spaced tiled ||| renamed [Replace "100Col"] emacs ||| centered
   where
     tiled = Tall nmaster delta ratio
     emacs = FixedColumn nmaster 20 100 10
             -- FIXME: FixedColumn doesn't work with Layout.Spacing module
     spaced = smartSpacing 4
+    centered = sideSpacing 420 Full
     nmaster = 1
     ratio = 1/2
     delta = 3/100
