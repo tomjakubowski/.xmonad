@@ -4,8 +4,10 @@ import           XMonad
 import           XMonad.Hooks.DynamicLog
 import           XMonad.Hooks.EwmhDesktops
 import           XMonad.Hooks.ManageDocks
+import           XMonad.Hooks.UrgencyHook
 import           XMonad.Layout.Decoration
 import           XMonad.Layout.FixedColumn
+import           XMonad.Layout.NoBorders
 import           XMonad.Layout.Renamed
 
 import           Config
@@ -14,14 +16,18 @@ import           Themes
 
 import qualified Data.Map as M
 
+myFocusedColor = base08
+myBorderWidth = 0               -- meh
+
 myWorkspaces = map show ([1..9] :: [Integer])
 
-myLayout = avoidStruts $ decoTiled' ||| decoTiled ||| emacs ||| decoCentered
+myLayout = decoTiled' ||| decoTiled ||| emacs ||| decoCentered
   where
     tiled    = spaced $ Tall nmaster delta ratio
     tiled'   = spaced' $ Tall nmaster delta ratio
-    emacs    = renamed [Replace "100Col"] $ FixedColumn nmaster 20 100 10
-               -- FIXME: FixedColumn doesn't work with Layout.Spacing module
+    emacs    = renamed [Replace "100Col"] $ FixedColumn nmaster 20 101 10
+               -- FIXME: FixedColumn doesn't seem to play with Layout.Spacing or Padding
+               -- modules :-\
     spaced   = padding 5 5
     spaced'  = padding 40 40
     centered = padding 0 420 Full
@@ -51,12 +57,15 @@ myKeys x = myKeys' x `M.union` keys defaultConfig x
 myXmobar = statusBar "xmobar" myXmobarPP toggleStrutsKey
 myConfig = defaultConfig { terminal = "termite"
                          , workspaces = myWorkspaces
-                         , layoutHook = myLayout
-                         , manageHook = manageDocks <+> myManageHook <+> manageHook defaultConfig
+                         , layoutHook = smartBorders $ avoidStruts myLayout
+                         , manageHook = manageDocks
+                                        <+> myManageHook
+                                        <+> manageHook defaultConfig
                          , modMask = mod4Mask
-                         , borderWidth = 0
+                         , borderWidth = myBorderWidth
+                         , focusedBorderColor = myFocusedColor
                          , handleEventHook = fullscreenEventHook
                          , keys = myKeys }
 
 main :: IO ()
-main = xmonad =<< myXmobar myConfig
+main = xmonad =<< myXmobar (withUrgencyHook NoUrgencyHook $ ewmh myConfig)
