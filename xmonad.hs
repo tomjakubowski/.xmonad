@@ -1,31 +1,39 @@
 {-# OPTIONS_GHC -fno-warn-missing-signatures #-}
-{-# LANGUAGE FlexibleContexts #-}
 
-import XMonad
-import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.EwmhDesktops
-import XMonad.Hooks.ManageDocks
-import XMonad.Layout.FixedColumn
-import XMonad.Layout.Renamed
+import           XMonad
+import           XMonad.Hooks.DynamicLog
+import           XMonad.Hooks.EwmhDesktops
+import           XMonad.Hooks.ManageDocks
+import           XMonad.Layout.Decoration
+import           XMonad.Layout.FixedColumn
+import           XMonad.Layout.Renamed
 
-import Padding
+import           Config
+import           Padding
+import           Themes
 
 import qualified Data.Map as M
 
 myWorkspaces = map show ([1..9] :: [Integer])
 
-myLayout = avoidStruts $ tiled ||| tiled' ||| emacs ||| centered
+myLayout = avoidStruts $ decoTiled' ||| decoTiled ||| emacs ||| decoCentered
   where
-    tiled = spaced $ Tall nmaster delta ratio
-    tiled' = spaced' $ Tall nmaster delta ratio
-    emacs = renamed [Replace "100Col"] $ FixedColumn nmaster 20 100 10
-            -- FIXME: FixedColumn doesn't work with Layout.Spacing module
-    spaced = padding 5 5
-    spaced' = padding 40 40
+    tiled    = spaced $ Tall nmaster delta ratio
+    tiled'   = spaced' $ Tall nmaster delta ratio
+    emacs    = renamed [Replace "100Col"] $ FixedColumn nmaster 20 100 10
+               -- FIXME: FixedColumn doesn't work with Layout.Spacing module
+    spaced   = padding 5 5
+    spaced'  = padding 40 40
     centered = padding 0 420 Full
     nmaster = 1
     ratio = 1/2
     delta = 3/100
+
+    decoTiled  = decorateLayout tiled myTheme
+    decoTiled' = decorateLayout tiled' myTheme
+    decoCentered = decorateLayout centered myTheme
+
+    decorateLayout l t = decoration shrinkText t DefaultDecoration l
 
 myManageHook :: ManageHook
 myManageHook = composeAll [ className =? "mpv" --> doFloat ]

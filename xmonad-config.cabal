@@ -19,7 +19,10 @@ executable xmonad-config
   main-is:             xmonad.hs
   -- other-modules:
   other-extensions:    FlexibleInstances, MultiParamTypeClasses
-  build-depends:       base >=4.7 && <4.8, X11 >=1.6 && <1.7,
-                       xmonad-contrib >=0.11 && <0.12, xmonad >= 0.11 && < 0.12
+  build-depends:       X11 >=1.6 && <1.7
+                     , base >=4.7 && <4.8
+                     , containers >= 0.5.5.1
+                     , xmonad >= 0.11 && < 0.12
+                     , xmonad-contrib >=0.11 && <0.12
   hs-source-dirs:      . lib
   default-language:    Haskell2010
