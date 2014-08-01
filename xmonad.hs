@@ -7,19 +7,18 @@ import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.ManageDocks
 import XMonad.Layout.FixedColumn
 import XMonad.Layout.Renamed
-import XMonad.Layout.Spacing
 
-import SideSpacing
+import Padding
 
 myWorkspaces = map show ([1..9] :: [Integer])
 
-myLayout = avoidStruts $ spaced tiled ||| renamed [Replace "100Col"] emacs ||| centered
+myLayout = avoidStruts $ spaced tiled ||| emacs ||| centered
   where
     tiled = Tall nmaster delta ratio
-    emacs = FixedColumn nmaster 20 100 10
+    emacs = renamed [Replace "100Col"] $ FixedColumn nmaster 20 100 10
             -- FIXME: FixedColumn doesn't work with Layout.Spacing module
-    spaced = smartSpacing 4
-    centered = sideSpacing 420 Full
+    spaced = padding 5 5
+    centered = padding 0 420 Full
     nmaster = 1
     ratio = 1/2
     delta = 3/100
